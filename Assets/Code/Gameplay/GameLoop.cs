@@ -12,6 +12,8 @@ namespace Code.Gameplay
         private Collider2D finishZone;
         private LevelManager levelManager;
         private AudioManager audioManager;
+        private PlayerController playerController;
+        private Collider2D playerCollider;
 
         private bool isLevelCompleted = false;
         private bool isInitialized = false;
@@ -19,6 +21,8 @@ namespace Code.Gameplay
         public void Initialize(GameObject player, Collider2D finishZone, LevelManager levelManager, AudioManager audioManager)
         {
             this.player = player;
+            this.playerController = player.GetComponent<PlayerController>();
+            this.playerCollider = player.GetComponent<Collider2D>();
             this.finishZone = finishZone;
             this.levelManager = levelManager;
             this.audioManager = audioManager;
@@ -35,7 +39,7 @@ namespace Code.Gameplay
                 CompleteLevel();
             }
             
-            if (!player.GetComponent<PlayerController>().isAlive)
+            if (!playerController.isAlive)
             {
                 audioManager.PlayLoseSound();
                 SceneManager.LoadScene("Game");
@@ -44,7 +48,6 @@ namespace Code.Gameplay
 
         private bool IsPlayerInFinishZone()
         {
-            Collider2D playerCollider = player.GetComponent<Collider2D>();
             if (playerCollider != null && finishZone != null)
             {
                 float playerArea = playerCollider.bounds.size.x * playerCollider.bounds.size.y;
