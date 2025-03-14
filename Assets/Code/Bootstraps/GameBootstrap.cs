@@ -12,7 +12,7 @@ public class GameBootstrap : MonoBehaviour
     [SerializeField] private GameUIController gameUIController;
     private LevelManager levelManager;
     [SerializeField] private GameLoop gameLoop;
-    [SerializeField] private MobileInputManager inputHandler;
+    [SerializeField] private PCInputManager inputHandler;
 
     void Awake()
     {
@@ -24,13 +24,12 @@ public class GameBootstrap : MonoBehaviour
         levelManager.LoadCurrentLevel();
         gameUIController.Initialize(levelManager);
         
-        GameObject playerObject = GameObject.Find("Player");
-        GameObject finishObject = GameObject.Find("Finish");
+        GameObject playerEntity = GameObject.Find("Player");
+        GameObject finishEntity = GameObject.Find("Finish");
 
-        PlayerMovementManager playerMovementManager = playerObject.GetComponent<PlayerMovementManager>();
-        playerMovementManager.Initialize(AudioManager.Instance);
-        inputHandler.Initialize(playerMovementManager);
-        gameLoop.Initialize(playerObject, finishObject.GetComponent<Collider2D>(), levelManager, AudioManager.Instance);
-        
+        PlayerMovementManager movementManager = playerEntity.GetComponent<PlayerMovementManager>();
+        movementManager.Initialize(AudioManager.Instance);
+        inputHandler.Initialize(movementManager);
+        gameLoop.Initialize(playerEntity, finishEntity.GetComponent<Collider2D>(), levelManager, AudioManager.Instance);
     }
 }

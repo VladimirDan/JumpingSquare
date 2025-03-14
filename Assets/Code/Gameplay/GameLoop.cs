@@ -8,77 +8,73 @@ namespace Code.Gameplay
 {
     public class GameLoop : MonoBehaviour
     {
-        private GameObject player;
-        private Collider2D finishZone;
+        private GameObject playerObject;
+        private Collider2D finishCollider;
         private LevelManager levelManager;
-        private AudioManager audioManager;
+        private AudioManager soundManager;
         private PlayerController playerController;
         private Collider2D playerCollider;
 
-        private bool isLevelCompleted = false;
-        private bool isInitialized = false;
+        private bool levelCompleted = false;
+        private bool initialized = false;
 
-        public void Initialize(GameObject player, Collider2D finishZone, LevelManager levelManager, AudioManager audioManager)
+        public void Initialize(GameObject player, Collider2D finish, LevelManager levelMgr, AudioManager audioMgr)
         {
-            this.player = player;
-            this.playerController = player.GetComponent<PlayerController>();
-            this.playerCollider = player.GetComponent<Collider2D>();
-            this.finishZone = finishZone;
-            this.levelManager = levelManager;
-            this.audioManager = audioManager;
-            isInitialized = true;
+            if (player == null || finish == null || levelMgr == null || audioMgr == null)
+            {
+                Debug.LogError("GameLoop: Невозможно инициализировать - один из параметров null!");
+                return;
+            }
+
+            playerObject = player;
+            playerController = player.GetComponent<PlayerController>();
+            playerCollider = player.GetComponent<Collider2D>();
+            finishCollider = finish;
+            levelManager = levelMgr;
+            soundManager = audioMgr;
+            initialized = true;
         }
 
         private void Update()
         {
-            if (!isInitialized)
+            if (!initialized || levelCompleted || playerController == null)
                 return;
 
-            if (IsPlayerInFinishZone())
+            if (IsPlayerAtFinish())
             {
                 CompleteLevel();
             }
             
             if (!playerController.isAlive)
             {
-                audioManager.PlayLoseSound();
+                soundManager.PlayLoseSound();
                 SceneManager.LoadScene("Game");
             }
         }
 
-        private bool IsPlayerInFinishZone()
+        private bool IsPlayerAtFinish()
         {
-            if (playerCollider != null && finishZone != null)
-            {
-                float playerArea = playerCollider.bounds.size.x * playerCollider.bounds.size.y;
-                float finishArea = finishZone.bounds.size.x * finishZone.bounds.size.y;
-                bool isInsideFinishZone = finishZone.bounds.Contains(playerCollider.bounds.center);
-                if (isInsideFinishZone && playerArea * 0.5f <= finishArea)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (playerCollider == null || finishCollider == null)
+                return false;
+
+            return finishCollider.bounds.Contains(playerCollider.bounds.center);
         }
 
         private void CompleteLevel()
         {
-            if (!isLevelCompleted)
-            {
-                isLevelCompleted = true;
-                Debug.Log("Конец уровня: Игрок достиг финиша");
-                audioManager.PlayVictorySound();
+            levelCompleted = true;
+            Debug.Log("Конец уровня: Игрок достиг финиша");
+            soundManager.PlayVictorySound();
 
-                if (levelManager != null)
-                {
-                    int nextLevelIndex = LevelProgressManager.LoadLevelProgress() + 1;
-                    LevelProgressManager.SaveLevelProgress(nextLevelIndex);
-                    SceneManager.LoadScene("Game");
-                }
-                else
-                {
-                    Debug.LogError("LevelManager не установлен!");
-                }
+            if (levelManager != null)
+            {
+                int nextLevel = LevelProgressManager.LoadLevelProgress() + 1;
+                LevelProgressManager.SaveLevelProgress(nextLevel);
+                SceneManager.LoadScene("Game");
+            }
+            else
+            {
+                Debug.LogError("GameLoop: LevelManager не установлен!");
             }
         }
     }

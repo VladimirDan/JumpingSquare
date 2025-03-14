@@ -14,10 +14,13 @@ namespace Code.Bootstraps
 
         void Awake()
         {
-            audioManager.Initialize();
-            audioManager.PlayMusic();
-            levelManager.Initialize();
-            mainMenuUIController.Initialize(audioManager, levelManager);
+            AudioManager soundSystem = audioManager;
+            LevelManager stageManager = levelManager;
+            
+            soundSystem.Initialize();
+            soundSystem.PlayMusic();
+            stageManager.Initialize();
+            mainMenuUIController.Initialize(soundSystem, stageManager);
         }
     }
 }

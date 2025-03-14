@@ -5,42 +5,52 @@ namespace Code.Gameplay.Player.PowerProjectileLogic
 {
     public class PowerProjectile : MonoBehaviour
     {
-        private Vector3 flightDirection;
-        private float speed;
-        private PlayerMovementManager playerMovementManager;
-        private AudioManager audioManager;
-        public ParticleSystem explosionParticles; 
+        private Vector3 movementDirection;
+        private float projectileSpeed;
+        private PlayerMovementManager movementManager;
+        private AudioManager soundManager;
+        private ParticleSystem explosionEffect;
+        private Rigidbody2D rb;
+        private Collider2D collider;
+        private SpriteRenderer spriteRenderer;
 
-        public void Initialize(Vector3 direction, float speed, PlayerMovementManager movementManager, AudioManager audioManager)
+        public void Initialize(Vector3 direction, float speed, PlayerMovementManager playerMovement, AudioManager audio)
         {
-            this.flightDirection = direction.normalized;
-            this.speed = speed;
-            this.playerMovementManager = movementManager;
-            this.audioManager = audioManager;
-            explosionParticles = transform.Find("ProjectileExplosion").GetComponent<ParticleSystem>();
+            movementDirection = direction.normalized;
+            projectileSpeed = speed;
+            movementManager = playerMovement;
+            soundManager = audio;
+            explosionEffect = transform.Find("ProjectileExplosion")?.GetComponent<ParticleSystem>();
+
+            rb = GetComponent<Rigidbody2D>();
+            collider = GetComponent<Collider2D>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void Update()
         {
-            transform.position += flightDirection * speed * Time.deltaTime;
+            transform.position += movementDirection * projectileSpeed * Time.deltaTime;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
             {
-                Vector3 oppositeForce = -flightDirection;
-                playerMovementManager?.ApplyForceToPlayer(oppositeForce);
+                Vector3 reflectedForce = -movementDirection;
+                movementManager?.ApplyForceToPlayer(reflectedForce);
             }
-            
-            explosionParticles.Play();
-            audioManager?.PlayExplosionSound();
-            
-            Destroy(GetComponent<Rigidbody2D>());
-            Destroy(GetComponent<Collider2D>());
-            Destroy(GetComponent<SpriteRenderer>());
-            Destroy(transform.Find("ProjectileFlying").gameObject);
-            //Destroy(gameObject);
+
+            explosionEffect?.Play();
+            soundManager?.PlayExplosionSound();
+
+            if (rb) Destroy(rb);
+            if (collider) Destroy(collider);
+            if (spriteRenderer) Destroy(spriteRenderer);
+
+            Transform projectileTrail = transform.Find("ProjectileFlying");
+            if (projectileTrail) Destroy(projectileTrail.gameObject);
+
+            Destroy(gameObject, 5f);
         }
     }
 }

@@ -8,8 +8,8 @@ namespace Code.Gameplay.Level
         public static LevelManager Instance { get; private set; }
 
         public LevelPrefabs levelPrefabs;
-        private GameObject currentLevel;
-        private int currentLevelIndex;
+        private GameObject activeLevel;
+        private int activeLevelIndex;
 
         public void Initialize()
         {
@@ -22,28 +22,28 @@ namespace Code.Gameplay.Level
 
         public void LoadCurrentLevel()
         {
-            int savedLevelIndex = LevelProgressManager.LoadLevelProgress(); 
-            LoadLevel(savedLevelIndex); 
+            int storedLevelIndex = LevelProgressManager.LoadLevelProgress(); 
+            LoadLevel(storedLevelIndex); 
         }
         
         public void LoadLevel(int index)
         {
-            if (currentLevel != null)
+            if (activeLevel != null)
             {
-                Destroy(currentLevel);
+                Destroy(activeLevel);
             }
             
-            currentLevelIndex = index % levelPrefabs.levelPrefabs.Length; 
-            GameObject levelPrefab = levelPrefabs.GetLevelPrefab(currentLevelIndex);
-            if (levelPrefab != null)
+            activeLevelIndex = index % levelPrefabs.levelPrefabs.Length; 
+            GameObject selectedLevelPrefab = levelPrefabs.GetLevelPrefab(activeLevelIndex);
+            if (selectedLevelPrefab != null)
             {
-                currentLevel = Instantiate(levelPrefab);
+                activeLevel = Instantiate(selectedLevelPrefab);
             }
         }
 
         public int GetCurrentLevelIndex()
         {
-            return currentLevelIndex; 
+            return activeLevelIndex; 
         }
     }
 }

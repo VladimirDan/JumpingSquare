@@ -5,15 +5,17 @@ namespace Code.InputManager
 {
     public class MobileInputManager : MonoBehaviour, IInputHandler
     {
-        private PlayerMovementManager playerMovementManager;
+        private PlayerMovementManager movementManager;
         [SerializeField] private RectTransform gameArea;
 
         private bool isInitialized = false;
+        private Camera mainCamera;
 
         public void Initialize(PlayerMovementManager playerMovementManager)
         {
-            this.playerMovementManager = playerMovementManager;
+            movementManager = playerMovementManager;
             isInitialized = true;
+            mainCamera = Camera.main; // Кешируем Camera.main для повышения производительности
         }
 
         void Update()
@@ -21,20 +23,25 @@ namespace Code.InputManager
             if (!isInitialized)
                 return;
 
+            HandleTouchInput();
+        }
+
+        private void HandleTouchInput()
+        {
             if (Input.touchCount > 0) // Проверяем наличие касаний
             {
                 Touch touch = Input.GetTouch(0); // Получаем первое касание
                 if (touch.phase == TouchPhase.Began) // Проверяем фазу касания
                 {
                     Vector3 touchPosition = touch.position;
-                    touchPosition.z = Camera.main.transform.position.z * -1; // Используем позицию камеры для Z
+                    touchPosition.z = mainCamera.transform.position.z * -1; // Используем позицию камеры для Z
 
-                    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+                    Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
                     worldPosition.z = 0f;
 
                     if (IsTouchInGameArea(worldPosition))
                     {
-                        playerMovementManager.EmitPowerProjectile(worldPosition);
+                        movementManager.EmitPowerProjectile(worldPosition);
                     }
                 }
             }
@@ -48,8 +55,8 @@ namespace Code.InputManager
                 if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
                 {
                     Vector3 touchPosition = touch.position;
-                    touchPosition.z = Camera.main.transform.position.z;
-                    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+                    touchPosition.z = mainCamera.transform.position.z;
+                    Vector3 worldPosition = mainCamera.ScreenToWorldPoint(touchPosition);
                     worldPosition.z = 0f;
                     return worldPosition;
                 }

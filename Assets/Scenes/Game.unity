@@ -450,7 +450,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 497769445}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 60d8b4b7211b4ffe923f606b7bf7fd6f, type: 3}
   m_Name: 
@@ -490,7 +490,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 497769445}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 617ad6d7a2554cc9847c4de098f06579, type: 3}
   m_Name: 
@@ -528,7 +528,7 @@ MonoBehaviour:
   playerController: {fileID: 0}
   gameUIController: {fileID: 2110633529}
   gameLoop: {fileID: 497769448}
-  inputHandler: {fileID: 497769449}
+  inputHandler: {fileID: 497769446}
 --- !u!4 &692813218
 Transform:
   m_ObjectHideFlags: 0
