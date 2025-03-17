@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 
 namespace Code.SoundManager
 {
@@ -15,8 +15,11 @@ namespace Code.SoundManager
         [SerializeField] private AudioClip victorySound;
         [SerializeField] private AudioClip backgroundMusic;
         
+        private static bool musicHasStarted = false;
+        public bool MusicIsPlaying => musicAudioSource != null && musicAudioSource.isPlaying;
+        
 
-        private bool isMusicPlaying = false;
+        public bool isMusicPlaying = false;
 
         public void Initialize()
         {
@@ -33,12 +36,10 @@ namespace Code.SoundManager
 
         public void PlayMusic()
         {
-            if (musicAudioSource != null && !musicAudioSource.isPlaying && !isMusicPlaying)
-            {
-                musicAudioSource.clip = backgroundMusic;
-                musicAudioSource.Play();
-                isMusicPlaying = true;
-            }
+            if (musicAudioSource == null || MusicIsPlaying) return;
+
+            musicAudioSource.clip = backgroundMusic;
+            musicAudioSource.Play();
         }
 
         public void PauseMusic()
@@ -46,16 +47,6 @@ namespace Code.SoundManager
             if (musicAudioSource != null && musicAudioSource.isPlaying)
             {
                 musicAudioSource.Pause();
-                isMusicPlaying = false;
-            }
-        }
-
-        public void StopMusic()
-        {
-            if (musicAudioSource != null)
-            {
-                musicAudioSource.Stop();
-                isMusicPlaying = false;
             }
         }
 

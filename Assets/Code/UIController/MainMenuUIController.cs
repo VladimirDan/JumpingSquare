@@ -10,19 +10,28 @@ namespace Code.UIController
     {
         public Button playButton;
         public Button soundButton;
+        public Button musicButton;
         public Sprite soundOnSprite;
         public Sprite soundOffSprite;
+        public Sprite musicOnSprite;
+        public Sprite musicOffSprite;
+        
         private bool isSoundOn = true;
+        private bool isMusicOn = true;
         private AudioManager _audioManager;
         private LevelManager levelManager;
+        
+        
 
         public void Initialize(AudioManager audioManager, LevelManager levelManager)
         {
-            this._audioManager = audioManager;
+            _audioManager = AudioManager.Instance;
             this.levelManager = levelManager;
+
             playButton.onClick.AddListener(StartGame);
             soundButton.onClick.AddListener(ToggleSound);
-            UpdateSoundButtonImage();
+            musicButton.onClick.AddListener(ToggleMusic);
+            
             CheckSoundState();
         }
 
@@ -36,15 +45,20 @@ namespace Code.UIController
             isSoundOn = !isSoundOn;
             AudioListener.volume = isSoundOn ? 1f : 0f;
             UpdateSoundButtonImage();
+        }
 
-            if (isSoundOn && _audioManager != null)
+        public void ToggleMusic()
+        {
+            isMusicOn = !isMusicOn;
+            if (isMusicOn)
             {
                 _audioManager.PlayMusic();
             }
-            else if (_audioManager != null)
+            else
             {
                 _audioManager.PauseMusic();
             }
+            UpdateMusicButtonImage();
         }
 
         private void UpdateSoundButtonImage()
@@ -52,10 +66,17 @@ namespace Code.UIController
             soundButton.GetComponent<Image>().sprite = isSoundOn ? soundOnSprite : soundOffSprite;
         }
 
+        private void UpdateMusicButtonImage()
+        {
+            musicButton.GetComponent<Image>().sprite = isMusicOn ? musicOnSprite : musicOffSprite;
+        }
+
         private void CheckSoundState()
         {
             isSoundOn = AudioListener.volume > 0f;
+            isMusicOn = _audioManager.MusicIsPlaying;  
             UpdateSoundButtonImage();
+            UpdateMusicButtonImage();
         }
     }
 }
