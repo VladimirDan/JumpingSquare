@@ -12,7 +12,7 @@ public class GameBootstrap : MonoBehaviour
     [SerializeField] private GameUIController gameUIController;
     private LevelManager levelManager;
     [SerializeField] private GameLoop gameLoop;
-    [SerializeField] private PCInputManager inputHandler;
+    [SerializeField] private MobileInputManager inputHandler;
 
     void Awake()
     {
