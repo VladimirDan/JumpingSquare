@@ -8,7 +8,7 @@ using Code.SoundManager;
 
 public class GameBootstrap : MonoBehaviour
 {
-    [SerializeField] private PlayerController playerController;
+    //[SerializeField] private PlayerController playerController;
     [SerializeField] private GameUIController gameUIController;
     private LevelManager levelManager;
     [SerializeField] private GameLoop gameLoop;
